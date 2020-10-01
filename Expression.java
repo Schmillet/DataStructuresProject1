@@ -62,28 +62,28 @@ public class Expression {
 	Token result;
 	switch(tok) {
 	case "+":
-	    result = new Token(TokenType.PLUS, 5, tok); 
+	    result = new Token(TokenType.PLUS, 3, "+"); 
 	    break;
         case "*":
-	    result = new Token(TokenType.TIMES, 4, tok);  
+	    result = new Token(TokenType.TIMES, 2, "*");  
 	    break;
         case "-":
-	    result = new Token(TokenType.MINUS, 5, tok);  
+	    result = new Token(TokenType.MINUS, 5, "-");  
 	    break;
         case "/":
-	    result = new Token(TokenType.DIV, 4, tok);  
+	    result = new Token(TokenType.DIV, 2, "/");  
 	    break;
         case "%":
-	    result = new Token(TokenType.MOD, 4, tok);  
+	    result = new Token(TokenType.MOD, 3, "%");  
 	    break;
         case "^":
-	    result = new Token(TokenType.POWER, 3, tok);  
+	    result = new Token(TokenType.POWER, 1, "^");  
 	    break;
         case "(":
-	    result = new Token(TokenType.OPEN, 1, tok);  
+	    result = new Token(TokenType.OPEN, 0, "(");  
 	    break;
         case ")":
-	    result = new Token(TokenType.CLOSE, 2, tok);  
+	    result = new Token(TokenType.CLOSE, 0, ")");  
 	    break;
 	default:
 	    result = new Token(tok);
@@ -111,14 +111,79 @@ public class Expression {
     // Given a list of tokens corresponding to an infix expression,
     // return the expression tree corresponding to it.
     public static Expression infixToExpression(List<Token> exp) {  // To do
+
+        
 	return null;
     }
 
     // Given a list of tokens corresponding to an infix expression,
     // return its equivalent postfix expression as a list of tokens.
     public static List<Token> infixToPostfix(List<Token> exp) {  // To do
+        Stack<Token> stack = new Stack<>();
+        List<Token> postfix = new LinkedList<>();  
         
-	return null;
+        for (int i = 0; i < exp.size(); i++)
+        {
+            Token t = exp.get(i);
+         
+            // if token is "("
+            if (t.token == TokenType.OPEN) 
+            {
+                stack.push(t); //pushes ( to stack
+            }
+            
+            // if token is ")"
+            else if (t.token == TokenType.CLOSE)
+            {
+                for (int j = 0; j < stack.size(); j++)
+                {
+                    Token p = stack.pop();
+                    
+                    // pops everything from stack until "("
+                    if (p.token != TokenType.OPEN)
+                    {
+                        postfix.add(p);
+                    }
+                }
+
+
+            }
+            
+            // if token is operator
+            else if (t.priority > 0)
+            {
+                // if stack is full, check next element and see which has higher priority
+                if(stack.isEmpty() == false)
+                {
+                    Token peek = stack.peek();
+                    
+                    // if next element in stack is an operator, and has lower priority, add to list
+                    if (peek.priority <= t.priority && peek.priority != 0)
+                    {
+                        postfix.add(stack.pop());
+                    }
+                }
+                stack.push(t);
+            }
+            else
+            {
+                postfix.add(t); // if t is a number, add to postfix list
+            }
+        }
+        
+        for (int i = 0; i <= stack.size(); i++)
+        {
+            Token p = stack.pop();
+            
+            if (p.token != TokenType.OPEN)
+            {
+             postfix.add(p);
+            }
+        }
+
+    
+        
+	return postfix;
     }
 
     // Given a postfix expression, evaluate it and return its value.
