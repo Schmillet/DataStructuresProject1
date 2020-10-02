@@ -126,8 +126,12 @@ public class Expression {
         {
             Token t = exp.get(i);
          
+            if (t.token == TokenType.NUMBER)
+            {
+                postfix.add(t); // if t is a number, add to postfix list
+            }
             // if token is "("
-            if (t.token == TokenType.OPEN) 
+            else if (t.token == TokenType.OPEN) 
             {
                 stack.push(t); //pushes ( to stack
             }
@@ -145,30 +149,26 @@ public class Expression {
                         postfix.add(p);
                     }
                 }
-
-
             }
-            
             // if token is operator
-            else if (t.priority > 0)
+            else
             {
                 // if stack is full, check next element and see which has higher priority
                 if(stack.isEmpty() == false)
                 {
                     Token peek = stack.peek();
                     
-                    // if next element in stack is an operator, and has lower priority, add to list
-                    if (peek.priority <= t.priority && peek.priority != 0)
+                    // if next element in stack is an operator, and has higher priorty, add to list
+                    if (peek.priority <= t.priority && peek.priority !=0)
                     {
-                        postfix.add(stack.pop());
+                        postfix.add(stack.peek());
+                        stack.pop();
                     }
                 }
                 stack.push(t);
             }
-            else
-            {
-                postfix.add(t); // if t is a number, add to postfix list
-            }
+
+        }
         }
         
         for (int i = 0; i <= stack.size(); i++)
