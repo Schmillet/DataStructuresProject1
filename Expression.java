@@ -68,13 +68,13 @@ public class Expression {
 	    result = new Token(TokenType.TIMES, 2, "*");  
 	    break;
         case "-":
-	    result = new Token(TokenType.MINUS, 5, "-");  
+	    result = new Token(TokenType.MINUS, 3, "-");  
 	    break;
         case "/":
 	    result = new Token(TokenType.DIV, 2, "/");  
 	    break;
         case "%":
-	    result = new Token(TokenType.MOD, 3, "%");  
+	    result = new Token(TokenType.MOD, 2, "%");  
 	    break;
         case "^":
 	    result = new Token(TokenType.POWER, 1, "^");  
