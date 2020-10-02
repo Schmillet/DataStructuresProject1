@@ -1,6 +1,6 @@
 // Starter code for Project 1
 
-// Change this to your NetId
+// ask170003, 
 
 
 import java.util.List;
@@ -23,34 +23,34 @@ public class Expression {
 	PLUS, TIMES, MINUS, DIV, MOD, POWER, OPEN, CLOSE, NIL, NUMBER
     }
     
-    public static class Token {
-	TokenType token;
-	int priority; // for precedence of operator
-	Long number;  // used to store number of token = NUMBER
-	String string;
+        public static class Token {
+        TokenType token;
+        int priority; // for precedence of operator
+        Long number;  // used to store number of token = NUMBER
+        String string;
 
-	Token(TokenType op, int pri, String tok) {
-	    token = op;
-	    priority = pri;
-	    number = null;
-	    string = tok;
-	}
+        Token(TokenType op, int pri, String tok) {
+            token = op;
+            priority = pri;
+            number = null;
+            string = tok;
+        }
 
-	// Constructor for number.  To be called when other options have been exhausted.
-	Token(String tok) {
-	    token = TokenType.NUMBER;
-	    number = Long.parseLong(tok);
-	    string = tok;
-	}
-	
-	boolean isOperand() { return token == TokenType.NUMBER; }
+        // Constructor for number.  To be called when other options have been exhausted.
+        Token(String tok) {
+            token = TokenType.NUMBER;
+            number = Long.parseLong(tok);
+            string = tok;
+        }
+        
+        boolean isOperand() { return token == TokenType.NUMBER; }
 
-	public long getValue() {
-	    return isOperand() ? number : 0;
-	}
+        public long getValue() {
+            return isOperand() ? number : 0;
+        }
 
-	public String toString() { return string; }
-    }
+        public String toString() { return string; }
+        }
 
     Token element;
     Expression left, right;
@@ -109,82 +109,48 @@ public class Expression {
     }
 
     // Given a list of tokens corresponding to an infix expression,
-    // return the expression tree corresponding to it.
+    // return the expression tree corresponding to it. Done by Andrew Kolkmeier
     public static Expression infixToExpression(List<Token> exp) {  // To do
+        //Stack to store tree nodes
+        Stack<Expression> nodeStack = new Stack<>();
 
-        
-	return null;
-    }
+        //Converts given expression to postfix for easy tree building
+        List<Token> postfix = infixToPostfix(exp);
 
-    // Given a list of tokens corresponding to an infix expression,
-    // return its equivalent postfix expression as a list of tokens.
-    public static List<Token> infixToPostfix(List<Token> exp) {  // To do
-        Stack<Token> stack = new Stack<>();
-        List<Token> postfix = new LinkedList<>();  
-        
-        for (int i = 0; i < exp.size(); i++)
+        for(int i = 0; i < postfix.size(); i++)
         {
-            Token t = exp.get(i);
-         
-            if (t.token == TokenType.NUMBER)
-            {
-                postfix.add(t); // if t is a number, add to postfix list
-            }
-            // if token is "("
-            else if (t.token == TokenType.OPEN) 
-            {
-                stack.push(t); //pushes ( to stack
-            }
+            Token t = postfix.get(i);
             
-            // if token is ")"
-            else if (t.token == TokenType.CLOSE)
+            //Checks if token is an operand
+            if(t.isOperand() == true)
             {
-                for (int j = 0; j < stack.size(); j++)
-                {
-                    Token p = stack.pop();
-                    
-                    // pops everything from stack until "("
-                    if (p.token != TokenType.OPEN)
-                    {
-                        postfix.add(p);
-                    }
-                }
+                Expression node = new Expression(t);
+                nodeStack.push(node);
             }
-            // if token is operator
+
+            //Checks if token is an operator
             else
             {
-                // if stack is full, check next element and see which has higher priority
-                if(stack.isEmpty() == false)
-                {
-                    Token peek = stack.peek();
-                    
-                    // if next element in stack is an operator, and has higher priorty, add to list
-                    if (peek.priority <= t.priority && peek.priority !=0)
-                    {
-                        postfix.add(stack.peek());
-                        stack.pop();
-                    }
-                }
-                stack.push(t);
-            }
+                //Pops the left node out of the stack
+                Expression right = nodeStack.pop();
 
-        }
-        }
-        
-        for (int i = 0; i <= stack.size(); i++)
-        {
-            Token p = stack.pop();
-            
-            if (p.token != TokenType.OPEN)
-            {
-             postfix.add(p);
+                //Pops the right node out of the stack
+                Expression left = nodeStack.pop();
+
+                //Creates subtree with the root being the operator and the two nodes being the left and right operands
+                Expression operatorNode = new Expression(t, left, right);
+
+                //Pushes subtree onto stack
+                nodeStack.push(operatorNode);
             }
         }
-
-    
         
-	return postfix;
+        //Sets the final tree to the last item on the stack
+        Expression rootNode = nodeStack.pop();
+
+	return rootNode;
     }
+
 
     // Given a list of tokens corresponding to an infix expression,
     // return its equivalent postfix expression as a list of tokens. Done by Jade Rodriguez
@@ -327,7 +293,7 @@ public class Expression {
 	return pval;
     }
 
-    // Given an expression tree, evaluate it and return its value.
+    // Given an expression tree, evaluate it and return its value. DOne by Andrew Kolkmeier
     public static long evaluateExpression(Expression tree) {  // To do
 	return 0;
     }
