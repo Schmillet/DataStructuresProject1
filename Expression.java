@@ -186,9 +186,145 @@ public class Expression {
 	return postfix;
     }
 
-    // Given a postfix expression, evaluate it and return its value.
+    // Given a list of tokens corresponding to an infix expression,
+    // return its equivalent postfix expression as a list of tokens. Done by Jade Rodriguez
+    public static List<Token> infixToPostfix(List<Token> exp) {  // To do
+        Stack<Token> stack = new Stack<>();
+        List<Token> postfix = new LinkedList<>();  
+        
+        for (int i = 0; i < exp.size(); i++)
+        {
+            Token t = exp.get(i);
+         
+            // if token is "("
+            if (t.token == TokenType.OPEN) 
+            {
+                stack.push(t); //pushes ( to stack
+            }
+            
+            // if token is ")"
+            else if (t.token == TokenType.CLOSE)
+            {
+                for (int j = 0; j < stack.size(); j++)
+                {
+                    Token p = stack.pop();
+                    
+                    // pops everything from stack until "("
+                    if (p.token != TokenType.OPEN)
+                    {
+                        postfix.add(p);
+                    }
+                }
+
+
+            }
+            
+            // if token is operator
+            else if (t.priority > 0)
+            {
+                // if stack is full, check next element and see which has higher priority
+                if(stack.isEmpty() == false)
+                {
+                    Token peek = stack.peek();
+                    
+                    // if next element in stack is an operator, and has lower priority, add to list
+                    if (peek.priority <= t.priority && peek.priority != 0)
+                    {
+                        postfix.add(stack.pop());
+                    }
+                }
+                stack.push(t);
+            }
+            else
+            {
+                postfix.add(t); // if t is a number, add to postfix list
+            }
+        }
+        
+        for (int i = 0; i <= stack.size(); i++)
+        {
+            Token p = stack.pop();
+            
+            // "(" still in stack, but doesn't add it to list
+            if (p.token != TokenType.OPEN)
+            {
+             postfix.add(p);
+            }
+        }
+
+    
+        
+	return postfix;
+    }
+
+    // Given a postfix expression, evaluate it and return its value. Done by Jade Rodriguez
     public static long evaluatePostfix(List<Token> exp) {  // To do
-	return 0;
+
+        Stack<Long> numStack = new Stack<>();
+        long pval = 0;
+        
+        // loop through the list of tokens
+        for (int i = 0; i < exp.size(); i++)
+        {
+            Token t = exp.get(i);
+            
+            // if number, push onto stack
+            if (t.token == TokenType.NUMBER)
+            {
+                numStack.push(t.number);
+            }
+           
+            // if operator, pop two numbers from the stack and do operation
+            else
+            {
+                long num2 = numStack.pop();
+                long num1 = numStack.pop();
+                long result = 1;
+                
+                // switch case depending on operand, pushes result back onto stack for next operation
+                switch(t.string)
+		{
+                case "+":
+                    result = num1 + num2;
+                    numStack.push(result);
+                    break;
+                case "-":
+                    result = num1 - num2;
+                    numStack.push(result);
+                    break;
+                case "*":
+                    result = num1 * num2;
+                    numStack.push(result);
+                    break;
+                case "/":
+                    result = num1 / num2;
+                    numStack.push(result);
+                    break;
+                case "%":
+                    result = num1 % num2;
+                    numStack.push(result);
+                    break;
+                case "^":
+                    // loop to calculate num1 to the power of num2
+                    for (int j = 0; j < num2; j++)
+                    {
+                        result = result * num1;
+                    }
+                    numStack.push(result);
+                    break;
+                default:
+                        break;
+                    
+                }
+                
+                
+            }
+        
+        
+        }
+  
+        pval = numStack.pop(); // after all operations, final result will be only thing left in the stack
+	return pval;
     }
 
     // Given an expression tree, evaluate it and return its value.
