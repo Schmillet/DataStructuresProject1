@@ -207,7 +207,7 @@ public class Expression {
             }
         }
         
-        for (int i = 0; i <= stack.size(); i++)
+        for (int i = 0; i < stack.size(); i++)
         {
             Token p = stack.pop();
             
@@ -293,45 +293,92 @@ public class Expression {
 	return pval;
     }
 
-    // Given an expression tree, evaluate it and return its value. DOne by Andrew Kolkmeier
+    // Given an expression tree, evaluate it and return its value. Done by Andrew Kolkmeier
     public static long evaluateExpression(Expression tree) {  // To do
-	return 0;
+        //Checks if tree is a node(operand)
+        if(tree.left == null && tree.right == null)
+        {
+            return tree.element.number;
+        }
+
+        //Tree is an operator
+        else
+        {
+            long result = 0;
+            //Stores the computed value of the left tree
+            long left = evaluateExpression(tree.left);
+
+            //Stores the computed value of the right tree
+            long right = evaluateExpression(tree.right);
+
+            //Performs correct calculation based on what the operator is
+            switch(tree.element.string)
+            {
+                case "+":
+                    result = left + right;
+                    break;
+                case "-":
+                    result = left - right;
+                    break;
+                case "*":
+                    result = left * right;
+                    break;
+                case "/":
+                    result = left / right;
+                    break;
+                case "%":
+                    result = left % right;
+                    break;
+                case "^":
+                    // loop to calculate left to the power of right
+                    for (int i = 0; i < right; i++)
+                    {
+                        result = result * left;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
     }
 
     // sample main program for testing
     public static void main(String[] args) throws FileNotFoundException {
         
-	Scanner in;
-	System.out.println("Enter Expression: ");
-        
-	if (args.length > 0) {
-	    File inputFile = new File(args[0]);
-	    in = new Scanner(inputFile);
-	} else {
-	    in = new Scanner(System.in);
-	}
+        Scanner in;
+        System.out.println("Enter Expression: ");
+            
+        if (args.length > 0) {
+            File inputFile = new File(args[0]);
+            in = new Scanner(inputFile);
+        } else {
+            in = new Scanner(System.in);
+        }
 
-	int count = 0;
-	while(in.hasNext()) {
-	    String s = in.nextLine();
-	    List<Token> infix = new LinkedList<>();
-	    Scanner sscan = new Scanner(s);
-	    int len = 0;
-	    while(sscan.hasNext()) {
-		infix.add(getToken(sscan.next()));
-		len++;
-	    }
-	    if(len > 0) {
-		count++;
-		System.out.println("Expression number: " + count);
-		System.out.println("Infix expression: " + infix);
-		Expression exp = infixToExpression(infix);
-		List<Token> post = infixToPostfix(infix);
-		System.out.println("Postfix expression: " + post);
-		long pval = evaluatePostfix(post);
-		long eval = evaluateExpression(exp);
-		System.out.println("Postfix eval: " + pval + " Exp eval: " + eval + "\n");
-	    }
-	}
+        int count = 0;
+        while(in.hasNext()) {
+            String s = in.nextLine();
+            List<Token> infix = new LinkedList<>();
+            Scanner sscan = new Scanner(s);
+            int len = 0;
+            while(sscan.hasNext()) {
+            infix.add(getToken(sscan.next()));
+            len++;
+            }
+            if(len > 0) {
+            count++;
+            System.out.println("Expression number: " + count);
+            System.out.println("Infix expression: " + infix);
+            Expression exp = infixToExpression(infix);
+            List<Token> post = infixToPostfix(infix);
+            System.out.println("Postfix expression: " + post);
+            long pval = evaluatePostfix(post);
+            long eval = evaluateExpression(exp);
+            System.out.println("Postfix eval: " + pval + " Exp eval: " + eval + "\n");
+            sscan.close();
+            }
+        }
+        in.close();
     }
 }
