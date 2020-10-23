@@ -2,7 +2,7 @@
 // Do not rename the class, or change names/signatures of methods that are declared to be public.
 
 
-// change to your netid
+// ask170003
 
 import java.util.Iterator;
 import java.util.Random;
@@ -11,29 +11,29 @@ public class SkipList<T extends Comparable<? super T>> {
     static final int PossibleLevels = 33;
     Entry head;
     Entry tail;
+    int size;
 
     static class Entry<E> {
-	E element;
-	Entry[] next;
-	Entry prev;
+        E element;
+        Entry[] next;
+        Entry prev;
 
-	public Entry(E x, int lev) {
-	    element = x;
-	    next = new Entry[lev];
-	    // add more code as needed
-	}
+        //Entry constructor
+	    public Entry(E x, int lev) {
+	        element = x;
+	        next = new Entry[lev];
+	        // add more code as needed
+	    }
 
-	public E getElement() {
-	    return element;
-	}
+        public E getElement() {
+            return element;
+        }
     }
     
     
 
-    // Constructor
-    public SkipList() {
-       Random r = new Random(); 
-       int size;
+    // Skiplist Constructor
+    public SkipList() { 
        head = new Entry(null, PossibleLevels);
        tail = new Entry(null, PossibleLevels);
     }
@@ -90,9 +90,19 @@ public class SkipList<T extends Comparable<? super T>> {
         }
     }
 
-    // Return element at index n of list.  First element is at index 0.
+    // Return element at index n of list.  First element is at index 0. Done by Andrew Kolkmeier
     public T get(int n) {
-	return null;
+        if(i > size-1){
+            throw new NullPointerException();
+        }
+        else{
+            Entry p = head;
+
+            for(int i = 0; i<n; i++){
+                p = p.next[0];
+            }
+            return p;
+        }
     }
 
     // Is the list empty?
@@ -119,5 +129,12 @@ public class SkipList<T extends Comparable<? super T>> {
     // Return the number of elements in the list
     public int size() {
 	return 0;
+    }
+
+    //Determines entry level when adding to list. Added by Andrew Kolkmeier
+    public int chooseLevel(){
+        Random r = new Random();
+        int lvl = 1 + Integer.numberOfTrailingZeros(r.nextInt());
+        return min(lvl, PossibleLevels - 1);
     }
 }
