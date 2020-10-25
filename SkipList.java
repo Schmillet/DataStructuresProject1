@@ -139,7 +139,7 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Return element at index n of list.  First element is at index 0. Done by Andrew Kolkmeier
     public T get(int n) {
-        if(i > size-1 || n < 0){
+        if(n > size-1 || n < 0){
             throw new NullPointerException();
         }
         else{
