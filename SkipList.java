@@ -19,11 +19,13 @@ public class SkipList<T extends Comparable<? super T>> {
         E element;
         Entry[] next;
         Entry prev;
+	int level;
 
         //Entry constructor
 	    public Entry(E x, int lev) {
 	        element = x;
 	        next = new Entry[lev];
+		level = lev;
 	        // add more code as needed
 	    }
 
@@ -57,7 +59,6 @@ public class SkipList<T extends Comparable<? super T>> {
         {
             int lvl = chooseLevel();
             Entry<T> entry = new Entry(x,lvl);
-            findPred(x);
             
             for (int i = 0; i < lvl; i++)  // for all levels new entry is in, add it to list
             {
@@ -66,18 +67,11 @@ public class SkipList<T extends Comparable<? super T>> {
                 {
                     entry.next[i] = pred[i].next[i]; // new entry points to value after pred
                     pred[i].next[i] = entry;         // pred now points to new entry
-                    entry.next[0].prev = entry;      // next now points back to new entry
+                    entry.next[i].prev = entry;      // next now points back to new entry
                 }
+            }
                 
-                // first element in list
-                else
-                {
-                    entry.next[0] = head.next[0];  // new entry points to what head used to point to 
-                    head.next[0] = entry;          // head now points to new entry
-                    entry.prev = head;             // new entry points back to head
-                }
-                
-                // not the last element in list
+                // not last element in the list
                 if (entry.next[0] != null)
                 {
                     entry.next[0].prev = entry;  // next points back to new entry
@@ -91,12 +85,11 @@ public class SkipList<T extends Comparable<? super T>> {
                     tail.prev = entry;       // tail now points back to new entry
                 }
             
-             }
+             
             
           size++;
           return true;
 	  }  
-    }
       
 	
     }
@@ -116,14 +109,10 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Does list contain x?
     public boolean contains(T x) {
-	findPred(x); // find predecessor of x
+        findPred(x); // find predecessor of x
         
         // if pred is not last element, and next element equals x, return true
-        if (pred[0].next[0].element != null && ((T)pred[0].next[0].element).compareTo(x)==0)
-        {
-            return true;
-        }
-        else return false;
+        return (pred[0].next[0] != tail && ((T)pred[0].next[0].element).compareTo(x) == 0);
 
     }
 
@@ -181,7 +170,33 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Remove x from list.  Removed element is returned. Return null if x not in list
     public T remove(T x) {
-	return null;
+	if (!contains(x)) return null; // x not in list
+ 
+        else {
+            
+            Entry entry = pred[0].next[0];
+            int lvl = entry.level;
+            for (int i = 0; i < lvl; i++)  // for all levels new entry is in, add it to list
+            {
+                pred[i].next[i] = entry.next[i]; // pred points to element after entry  
+            }
+            
+            // if not the last element in the list
+            if (entry.next[0] != null) 
+            {
+		entry.next[0].prev = pred[0];
+	    } 
+            
+            else 
+            {
+              tail.prev = pred[0];
+	    }
+            
+        size--;
+        return (T)entry.element;
+            
+        }
+         
     }
 
     // Return the number of elements in the list. 
