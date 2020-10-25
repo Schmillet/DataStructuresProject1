@@ -3,14 +3,15 @@
 
 
 // ask170003
+// jrr170005
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.NoSuchElementException;
 
 public class SkipList<T extends Comparable<? super T>> {
     static final int PossibleLevels = 33;
-    Entry head;
-    Entry tail;
+    Entry <T> head, tail;
     int size;
 
     static class Entry<E> {
@@ -36,16 +37,25 @@ public class SkipList<T extends Comparable<? super T>> {
     public SkipList() { 
        head = new Entry(null, PossibleLevels);
        tail = new Entry(null, PossibleLevels);
+       size = 0;
+	 
+       for (int i = 0; i < 33; i++) // for all levels, head points to tail
+       {
+           head.next[i] = tail;
+       }
+	   
     }
 
 
     // Add x to list. If x already exists, reject it. Returns true if new node is added to list
     public boolean add(T x) {
-        if (contains(x)== true) return false;
+        if (contains(x)) return false;
         
         else
         {
-         
+         int lvl = chooseLevel();
+         Entry<T> entry = new Entry(x,lvl);
+	 size ++;
           
           return true;  
         }
@@ -55,7 +65,7 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Find smallest element that is greater or equal to x
     public T ceiling(T x) {
-        if (contains(x)== true) return x;
+        if (contains(x)) return x;
         
         else
         {
@@ -67,21 +77,22 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Does list contain x?
     public boolean contains(T x) {
-        T node = x;
-
-
-        
 	return false;
     }
 
     // Return first element of list
     public T first() {
-	return null;
+	if (isEmpty()) throw new NoSuchElementException();
+        
+        else {
+            return (T)head.next[0].element;
+        }
+
     }
 
     // Find largest element that is less than or equal to x
     public T floor(T x) {
-        if (contains(x)== true) return x;
+        if (contains(x)) return x;
         
         else
         {
@@ -107,7 +118,7 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Is the list empty?
     public boolean isEmpty() {
-        if (head.getElement() == null) return true;
+        if (head.next[0] == tail) return true;
         else return false;
     }
 
