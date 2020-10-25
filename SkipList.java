@@ -51,8 +51,8 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Add x to list. If x already exists, reject it. Returns true if new node is added to list
     public boolean add(T x) {
-        if (contains(x)) return false; // x exists in list, reject
-        
+        if (contains(x)) return false;// x exists in list, reject
+   
         else  // add if not in list
         {
             int lvl = chooseLevel();
@@ -61,35 +61,70 @@ public class SkipList<T extends Comparable<? super T>> {
             
             for (int i = 0; i < lvl; i++)  // for all levels new entry is in, add it to list
             {
-                entry.next[i] = pred[i].next[i]; //new entry points to value after pred
-                pred[i].next[i] = entry;         // pred now points to new entry
+                // not the first element in list
+                if (pred[i] != null)
+                {
+                    entry.next[i] = pred[i].next[i]; // new entry points to value after pred
+                    pred[i].next[i] = entry;         // pred now points to new entry
+                    entry.next[0].prev = entry;      // next now points back to new entry
+                }
                 
+                // first element in list
+                else
+                {
+                    entry.next[0] = head.next[0];  // new entry points to what head used to point to 
+                    head.next[0] = entry;          // head now points to new entry
+                    entry.prev = head;             // new entry points back to head
+                }
                 
-            }
+                // not the last element in list
+                if (entry.next[0] != null)
+                {
+                    entry.next[0].prev = entry;  // next points back to new entry
+                    entry.prev = pred[0];        // new entry points back to pred
+                }
             
-            size++;
-          
-          return true;  
-        }
-     
+                // last element in list
+                else 
+                {
+                    entry.prev = pred[0];    // new entry points back to pred
+                    tail.prev = entry;       // tail now points back to new entry
+                }
+            
+             }
+            
+          size++;
+          return true;
+	  }  
+    }
+      
 	
     }
 
     // Find smallest element that is greater or equal to x
     public T ceiling(T x) {
-        if (contains(x)) return x;
+        if (contains(x)) return x; // returns x if x is in list
         
         else
         {
-            
-            return x;
+            findPred(x); // finds predecessor of x 
+            return (T)pred[0].next[0].element; //returns element after pred
         }
+	
 	
     }
 
     // Does list contain x?
     public boolean contains(T x) {
-	return false;
+	findPred(x); // find predecessor of x
+        
+        // if pred is not last element, and next element equals x, return true
+        if (pred[0].next[0].element != null && ((T)pred[0].next[0].element).compareTo(x)==0)
+        {
+            return true;
+        }
+        else return false;
+
     }
 
     // Return first element of list
@@ -104,12 +139,12 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Find largest element that is less than or equal to x
     public T floor(T x) {
-        if (contains(x)) return x;
+        if (contains(x)) return x; // element equal to x
         
         else
         {
-            
-            return x;
+            findPred(x);		 // finds predecessor of x, even when x isn't in the list
+            return pred[0].element;	 // return element before x
         }
     }
 
@@ -119,19 +154,18 @@ public class SkipList<T extends Comparable<? super T>> {
             throw new NullPointerException();
         }
         else{
-            Entry p = head;
+            Entry<T> p = head;
 
             for(int i = 0; i<n; i++){
                 p = p.next[0];
             }
-            return p;
+            return (T)p;
         }
     }
 
-    // Is the list empty? Done by Jade Rodriguez.
+    // Is the list empty? 
     public boolean isEmpty() {
-        if (size == 0) return true;
-        else return false;
+        return(size==0);
     }
 
     // Iterate through the elements of list in sorted order
@@ -141,7 +175,8 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Return last element of list
     public T last() {
-	return null;
+	if (isEmpty()) throw new NoSuchElementException();
+        else return (T)tail.prev.element;
     }
 
     // Remove x from list.  Removed element is returned. Return null if x not in list
@@ -149,7 +184,7 @@ public class SkipList<T extends Comparable<? super T>> {
 	return null;
     }
 
-    // Return the number of elements in the list. Done by Jade Rodriguez
+    // Return the number of elements in the list. 
     public int size() {
 	return size;
     }
