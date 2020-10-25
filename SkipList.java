@@ -118,9 +118,9 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Return first element of list
     public T first() {
-	if (isEmpty()) throw new NoSuchElementException();
+        if (head.next[0]== null) return null;
         
-        else {
+        else{
             return (T)head.next[0].element;
         }
 
@@ -139,7 +139,7 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Return element at index n of list.  First element is at index 0. Done by Andrew Kolkmeier
     public T get(int n) {
-        if(i > size-1){
+        if(i > size-1 || n < 0){
             throw new NullPointerException();
         }
         else{
@@ -148,7 +148,7 @@ public class SkipList<T extends Comparable<? super T>> {
             for(int i = 0; i<n; i++){
                 p = p.next[0];
             }
-            return (T)p;
+            return (T)p.next[0].element;
         }
     }
 
@@ -164,7 +164,7 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Return last element of list
     public T last() {
-	if (isEmpty()) throw new NoSuchElementException();
+        if (tail.prev == null) return null;
         else return (T)tail.prev.element;
     }
 
