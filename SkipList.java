@@ -165,9 +165,7 @@ public class SkipList<T extends Comparable<? super T>> {
     // Return element at index n of list.  First element is at index 0. Done by Andrew Kolkmeier
     public T get(int n) {
         if(n > size - 1|| n < 0){
-            //throw new NullPointerException();
-            System.out.println("Out of Bounds");
-            return null;
+            throw new NullPointerException();
         }
         else{
             Entry<T> p = head;
@@ -192,7 +190,7 @@ public class SkipList<T extends Comparable<? super T>> {
     // Return last element of list
     public T last() {
         if (tail.prev == null) return null;
-        else return get(size);//(T)tail.prev.element;
+        else return get(size-1);//(T)tail.prev.element;
     }
 
     // Remove x from list.  Removed element is returned. Return null if x not in list
