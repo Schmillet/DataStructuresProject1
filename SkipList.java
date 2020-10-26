@@ -19,18 +19,43 @@ public class SkipList<T extends Comparable<? super T>> {
         E element;
         Entry[] next;
         Entry prev;
-	int level;
+	    int level;
 
         //Entry constructor
 	    public Entry(E x, int lev) {
 	        element = x;
 	        next = new Entry[lev];
-		level = lev;
+		    level = lev;
 	        // add more code as needed
 	    }
 
         public E getElement() {
             return element;
+        }
+    }
+
+    static class CustomIterator<T> implements Iterator<T>{
+        Entry<T> current;
+        Entry<T> end;
+
+        CustomIterator(SkipList list){
+            //Sets the cursor to the beginning of the list
+            current = list.head;
+            end = list.tail;
+        }
+
+        public boolean hasNext(){
+            //Checks if there is an entry after the current one
+            if(current.next[0] != end){
+                return true;
+            }
+            return false;
+        }
+        
+        //Returns the next entry
+        public T next(){
+            current = current.next[0];
+            return (T)current.element;
         }
     }
     
@@ -159,7 +184,7 @@ public class SkipList<T extends Comparable<? super T>> {
 
     // Iterate through the elements of list in sorted order
     public Iterator<T> iterator() {
-	return null;
+	    return new CustomIterator<T>(this);
     }
 
     // Return last element of list
