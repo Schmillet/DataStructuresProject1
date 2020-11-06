@@ -42,7 +42,9 @@ public class MDS {
 
     // b. Find(id): return price of item with given id (or 0, if not found).
     public int find(int id) {
-	return 0;
+        Entry entry = treeMap.get(id);
+        if (entry != null) return entry.price;  // entry found, return price
+        else return 0;                          // entry does not exist
     }
 
     /* 
