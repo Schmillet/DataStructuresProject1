@@ -1,4 +1,4 @@
-package com.mycompany.assignment4;
+
 
 import java.util.HashMap; 
 import java.util.*;
@@ -51,7 +51,19 @@ public class MDS {
        or 0, if such an id did not exist.
     */
     public int delete(int id) {
-	return 0;
+	Entry entry = treeMap.get(id);
+        int descSum = 0;
+        
+        if (entry == null) return 0; // entry does not exist
+        
+        else
+        { 
+            for (long i : entry.description){
+                descSum += i;       // add desription ints together
+            }
+            treeMap.remove(id);     // removes entry from tree
+            return descSum;         // returns sum of description ints
+        }
     }
 
     /* 
