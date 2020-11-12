@@ -9,23 +9,25 @@ public class MDS {
     
        // class to create entries in the search
         public class Entry {
-            private long id;
+            private int id;
             private int price;
-            private TreeSet<Long> description;
+            private TreeSet<Integer> description;
             
             // Entry constructor
-            public Entry(long id, TreeSet<Long> description, int price){
+            public Entry(int id, TreeSet<Integer> description, int price){
                 this.id = id;
                 this.description = description;
                 this.price = price;
             }
         
         }
+   TreeMap <Integer, Entry> treeMap;
+   HashMap<Integer, TreeSet<Integer>> hashMap;
    
     // Constructors
     public MDS() {
-        TreeMap <Long, Entry> treeMap = new TreeMap<>();        // id/entry map
-        HashMap<Long, TreeSet<Long>> hashMap = new HashMap<>(); // id/description map
+        treeMap = new TreeMap<>(); // id/entry map
+        hashMap = new HashMap<>(); // id/description map
    
     }
     /* Public methods of MDS. Do not change their signatures.
@@ -37,6 +39,59 @@ public class MDS {
        Returns 1 if the item is new, and 0 otherwise.
     */
     public int insert(int id, int price, java.util.List<Integer> list) {
+        
+        // id not found in treemap
+        if (treeMap.containsKey(id) == false)
+        {
+            //create new entry and put entry in tree map according to id
+            Entry newEntry = new Entry(id, new TreeSet<>(list), price);
+            treeMap.put(id, newEntry);
+            
+            // iterate through description list
+            for (int descId : list)
+                
+                // hashmap has descId, replace it
+                if (hashMap.containsKey(descId))
+                {
+                    TreeSet<Integer> oldSet = hashMap.get(descId);              // put exsisting id in oldSet
+                    oldSet.add(id);                                             
+                    hashMap.replace(descId, oldSet);                            // update it
+                    
+                }
+                //hashmap does not have descId, add it
+                else
+                {
+                    TreeSet<Integer> newSet = new TreeSet<>();
+                    newSet.add(id);
+                    hashMap.put(descId, newSet);
+                }
+            
+           return 1;
+        }
+        
+        // id in treemap
+        else
+        {
+            // update price only if list is empty
+            if (list.isEmpty())
+            {
+ 
+                Entry newEntry = treeMap.get(id);
+                newEntry.price = price;
+                treeMap.replace(id, newEntry);
+            }
+            // list is not empty, update both price and description
+            else
+            {
+                Entry newEntry = new Entry (id, new TreeSet<>(list), price);    // create new entry
+                Entry oldDesc = treeMap.get(id);                                // get existing entry
+                TreeSet<Integer> oldSet = oldDesc.description;                  
+                treeMap.replace(id,newEntry);                                   // replace entry in treeset
+                hashMap.remove(id, oldDesc);                                    // remoive old entry in hashmap and add new one
+                hashMap.put(id,new TreeSet<>(list));
+                
+            }
+        }
 	return 0;
     }
 
