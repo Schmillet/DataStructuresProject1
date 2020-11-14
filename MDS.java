@@ -160,12 +160,12 @@ public class MDS {
         if(hashMap.containsKey(n)){
             TreeSet<Integer> compSet = hashMap.get(n);
             Entry initEntry = treeMap.get(compSet.first());
-            int maxPrice = initEntry.price;
+            Integer maxPrice = initEntry.price;
 
-            for(int id : compSet)
+            for(Integer id : compSet)
             {
                 Entry entry = treeMap.get(id);
-                if(entry.price >= maxPrice)
+                if(entry.price > maxPrice)
                 {
                     maxPrice = entry.price;
                 }
@@ -183,7 +183,21 @@ public class MDS {
        their prices fall within the given range, [low, high].
     */
     public int findPriceRange(int n, int low, int high) {
-	return 0;
+        if(hashMap.containsKey(n)){
+                int numOfItems = 0;
+                TreeSet<Integer> compSet = hashMap.get(n);
+
+                for(Integer id : compSet){
+                    if(treeMap.get(id).price >= low && treeMap.get(id).price <= high){
+                        numOfItems +=1;
+                    }
+                }
+
+                return numOfItems;
+        }
+        else{
+            return 0;
+        }
     }
     
     /*
@@ -194,7 +208,14 @@ public class MDS {
 
     */
     public int priceHike(int low, int high, int rate){
-        return 0;
+        int hikeAmount = 0;
+        for(int i = low; i <= high; i++){
+            if(treeMap.containsKey(i)){
+                hikeAmount = hikeAmount + (treeMap.get(i).price*(rate/100));
+                treeMap.get(i).price = treeMap.get(i).price + (treeMap.get(i).price*(rate/100));
+            }
+        }
+        return hikeAmount;
     }
 
     /*
@@ -208,7 +229,7 @@ public class MDS {
             Entry entry = treeMap.get(id);
             int removedItems = 0;
 
-            for(int listElement : list){
+            for(Integer listElement : list){
                 if(entry.description.contains(listElement)){
                     removedItems += listElement;
                     entry.description.remove(listElement);
