@@ -1,7 +1,8 @@
-
-
 import java.util.HashMap; 
 import java.util.*;
+
+//Andrew Kolkmeier ask170003
+//Jade Rodriguez jrr170005
 
 // If you want to create additional classes, place them in this file as subclasses of MDS
 
@@ -130,7 +131,24 @@ public class MDS {
        Return 0 if there is no such item.
     */
     public int findMinPrice(int n) {
-	return 0;
+        if(hashMap.containsKey(n)){
+            TreeSet<Integer> compSet = hashMap.get(n);
+            Entry initEntry = treeMap.get(compSet.first());
+            int minPrice = initEntry.price;
+
+            for(int id : compSet)
+            {
+                Entry entry = treeMap.get(id);
+                if(entry.price < minPrice)
+                {
+                    minPrice = entry.price;
+                }
+            }
+            return minPrice;
+        }
+        else{
+            return 0;
+        }
     }
 
     /* 
@@ -139,7 +157,24 @@ public class MDS {
        Return 0 if there is no such item.
     */
     public int findMaxPrice(int n) {
-	return 0;
+        if(hashMap.containsKey(n)){
+            TreeSet<Integer> compSet = hashMap.get(n);
+            Entry initEntry = treeMap.get(compSet.first());
+            int maxPrice = initEntry.price;
+
+            for(int id : compSet)
+            {
+                Entry entry = treeMap.get(id);
+                if(entry.price >= maxPrice)
+                {
+                    maxPrice = entry.price;
+                }
+            }
+            return maxPrice;
+        }
+        else{
+            return 0;
+        }
     }
 
     /* 
@@ -169,6 +204,20 @@ public class MDS {
       deleted from the description of id.  Return 0 if there is no such id.
     */
     public int removeNames(int id, java.util.List<Integer> list) {
-	return 0;
+        if(treeMap.containsKey(id)){
+            Entry entry = treeMap.get(id);
+            int removedItems = 0;
+
+            for(int listElement : list){
+                if(entry.description.contains(listElement)){
+                    removedItems += listElement;
+                    entry.description.remove(listElement);
+                }
+            }
+            return removedItems;
+        }
+        else{
+            return 0;
+        }
     }
 }
