@@ -133,15 +133,17 @@ public class MDS {
     public int findMinPrice(int n) {
         if(hashMap.containsKey(n)){
             TreeSet<Integer> compSet = hashMap.get(n);
-            Entry initEntry = treeMap.get(compSet.first());
-            int minPrice = initEntry.price;
-
+            int minPrice = 0;
+            if(treeMap.containsKey(compSet.first())){
+                minPrice = treeMap.get(compSet.first()).price;
+            }
             for(int id : compSet)
             {
-                Entry entry = treeMap.get(id);
-                if(entry.price < minPrice)
-                {
-                    minPrice = entry.price;
+                if(treeMap.containsKey(id)){
+                    if(treeMap.get(id).price < minPrice)
+                    {
+                        minPrice = treeMap.get(id).price;
+                    }
                 }
             }
             return minPrice;
@@ -157,24 +159,26 @@ public class MDS {
        Return 0 if there is no such item.
     */
     public int findMaxPrice(int n) {
-        if(hashMap.containsKey(n)){
-            TreeSet<Integer> compSet = hashMap.get(n);
-            Entry initEntry = treeMap.get(compSet.first());
-            Integer maxPrice = initEntry.price;
-
-            for(Integer id : compSet)
-            {
-                Entry entry = treeMap.get(id);
-                if(entry.price > maxPrice)
-                {
-                    maxPrice = entry.price;
-                }
-            }
-            return maxPrice;
-        }
-        else{
+        if(!hashMap.containsKey(n)){
             return 0;
         }
+
+        TreeSet<Integer> compSet = hashMap.get(n);
+        int maxPrice = 0;
+            if(treeMap.containsKey(compSet.first())){
+                maxPrice = treeMap.get(compSet.first()).price;
+            }
+
+        for(int id : compSet){
+            if(treeMap.containsKey(id))
+            {
+                int current = treeMap.get(id).price;
+                if(maxPrice > current){
+                    maxPrice = current;
+                }
+            }
+        }
+        return maxPrice;
     }
 
     /* 
