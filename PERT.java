@@ -3,13 +3,13 @@
  */
 
 // change dsa to your netid
-package jrr170005;
+package dsa;
 
-import  jrr170005.Graph;
-import  jrr170005.Graph.Vertex;
-import  jrr170005.Graph.Edge;
-import  jrr170005.Graph.GraphAlgorithm;
-import  jrr170005.Graph.Factory;
+import  dsa.Graph;
+import  dsa.Graph.Vertex;
+import  dsa.Graph.Edge;
+import  dsa.Graph.GraphAlgorithm;
+import  dsa.Graph.Factory;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -29,6 +29,8 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
         int slack;
         boolean crit;
         Vertex parent;
+	enum Status{visited, visiting, notVisited};
+        Status status;
         
 	
 	public PERTVertex(Vertex u) {
@@ -39,6 +41,7 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
             slack = 0;
             crit = false;
             parent = null;
+	    status = status.notVisited;
           
             
 	}
@@ -74,6 +77,26 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
     }
 
     void dfsVisit(Vertex u) {
+	//if visiting a node that is already being visited, it is cyclic and NOT a DAG
+        if (get(u).status == PERTVertex.Status.visiting) 
+        {
+            isDAG = false;  
+        }
+        else{
+            //visit neighbors of node u
+            get(u).status = PERTVertex.Status.visiting;
+            for (Edge e : g.outEdges(u)){
+                Vertex v = e.otherEnd(u);
+                
+                //recursive call for visiting nodes
+                if (get(v).status == PERTVertex.Status.notVisited){
+                    get(v).parent = u;
+                    dfsVisit(v);
+                }
+            }
+            //change status to visited
+            get(u).status = PERTVertex.Status.visited;
+        }
     }
 
     // The following methods are called after calling pert().
